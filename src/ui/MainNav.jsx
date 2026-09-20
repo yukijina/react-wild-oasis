@@ -1,4 +1,12 @@
-import styled from "styled-components";
+import { NavLink } from 'react-router-dom';
+import styled from 'styled-components';
+import {
+  HiOutlineHome,
+  HiOutlineCalendar,
+  HiOutlineLibrary,
+  HiOutlineUsers,
+  HiOutlineCog,
+} from 'react-icons/hi';
 
 const NavList = styled.ul`
   display: flex;
@@ -6,7 +14,8 @@ const NavList = styled.ul`
   gap: 0.8rem;
 `;
 
-const Link = styled.a`
+// it is gonna be NavLink fro, react router
+const StyledNavLink = styled(NavLink)`
   &:link,
   &:visited {
     display: flex;
@@ -44,3 +53,50 @@ const Link = styled.a`
     color: var(--color-brand-600);
   }
 `;
+
+function MainNav() {
+  return (
+    <nav>
+      {/* Link will reload entire page. NavLink does not */}
+      <NavList>
+        <li>
+          {/* If we don't use styled. it should be */}
+          {/* <NavLink to='/dashboard'>Home</NavLink> */}
+
+          {/* Styled version. we set up NavLink in the styled above */}
+          <StyledNavLink to='/dashboard'>
+            <HiOutlineHome />
+            <span>Home</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          {/* <NavLink to='/bookings'>Bookings</NavLink> */}
+          <StyledNavLink to='/bookings'>
+            <HiOutlineCalendar />
+            <span>Bookings</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/cabins'>
+            <HiOutlineLibrary />
+            <span>Cabins</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/users'>
+            <HiOutlineUsers />
+            <span>Users</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/settings'>
+            <HiOutlineCog />
+            <span>Settings</span>
+          </StyledNavLink>
+        </li>
+      </NavList>
+    </nav>
+  );
+}
+
+export default MainNav;
