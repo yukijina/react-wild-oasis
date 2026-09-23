@@ -17,7 +17,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // amount of time data stays fresh 60 seconds x 1000 mili seconds = 1min
-      staleTime: 60 * 1000,
+      // staleTime: 60 * 1000,
+      staleTime: 0,
     },
   },
 });
