@@ -29,7 +29,7 @@ export async function createEditCabin(newCabin, id) {
   // console.log(imageName);
   //https://ewytfapmerrnrlhrlibk.supabase.co/storage/v1/object/public/cabin-images/cabin-001.jpg
   // Edit & No new image: use the existing url.
-  //Edit (new image) or Create:  generate image path and upload new url
+  // Edit (new image) or Create:  generate image path and upload new url
   const imagePath = hasImagePath
     ? newCabin.image
     : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
@@ -52,6 +52,7 @@ export async function createEditCabin(newCabin, id) {
   }
 
   //2. Upload image to the bucket
+  if (hasImagePath) return data;
   const { error: storageError } = await supabase.storage
     .from('cabin-images')
     .upload(imageName, newCabin.image);
