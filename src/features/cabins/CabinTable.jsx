@@ -1,8 +1,7 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
-import { getCabins } from '../../services/apiCabins';
 import Spinner from '../../ui/Spinner';
 import CabinRow from './CabinRow';
+import { useCabins } from './useCabins';
 
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
@@ -29,17 +28,7 @@ const TableHeader = styled.header`
 `;
 
 function CabinTable() {
-  // useQuery returns fetched data, isLoading, error, status and many more
-  const {
-    isLoading,
-    data: cabins,
-    error,
-  } = useQuery({
-    // queryKey has to be in array. we use queryKey later when we delete, update etc.
-    queryKey: ['cabins'],
-    // this function has to return promise (fetching returns promise)
-    queryFn: getCabins,
-  });
+  const { isLoading, error, cabins } = useCabins();
 
   if (isLoading) return <Spinner />;
 
