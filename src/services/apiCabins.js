@@ -15,21 +15,35 @@ export async function getCabins() {
 }
 
 // create single cabin
-export async function createCabin(newCabin) {
+export async function createEditCabin(newCabin, id) {
+  console.log(newCabin);
+  // image path is differnt from edit (url if new image was not uploaded) and create(file upload)
+  // without optional chaining, code might break because it is not text
+  const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
   // Create radonm number but we don't want any / so replacing with blank
   const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
     '/',
     ''
   );
 
-  console.log(imageName);
+  // console.log(imageName);
   //https://ewytfapmerrnrlhrlibk.supabase.co/storage/v1/object/public/cabin-images/cabin-001.jpg
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+  // Edit & No new image: use the existing url.
+  //Edit (new image) or Create:  generate image path and upload new url
+  const imagePath = hasImagePath
+    ? newCabin.image
+    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-  // 1. Create a cabin
-  const { data, error } = await supabase
-    .from('cabins')
-    .insert([{ ...newCabin, image: imagePath }]);
+  // 1. Create/Edit cabin
+  // insert function does not immediately return row. If we need a newly created data, we need to add select().single()
+  let query = supabase.from('cabins');
+  // a) Create a cabin
+  if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
+
+  // b) Edit a cabin update does not use array
+  if (id) query = query.update({ ...newCabin, image: imagePath }).eq('id', id);
+
+  const { data, error } = await query.select().single();
 
   console.log(newCabin);
   if (error) {
