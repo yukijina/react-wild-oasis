@@ -1,4 +1,6 @@
-import styled from "styled-components";
+import styled from 'styled-components';
+import { HiX } from 'react-icons/hi';
+import { createPortal } from 'react-dom';
 
 const StyledModal = styled.div`
   position: fixed;
@@ -48,3 +50,22 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
+
+function Modal({ children, onClose }) {
+  // creatPortal function takes second arg, attach to documentbody
+  // we can call modal anywhere in the body. Modal is direct child of the body
+  // outside of the dom, not in root. avoid overflow: hidden in some components
+  return createPortal(
+    <Overlay>
+      <StyledModal>
+        <Button onClick={onClose}>
+          <HiX />
+        </Button>
+        <div>{children}</div>
+      </StyledModal>
+    </Overlay>,
+    document.body
+  );
+}
+
+export default Modal;
