@@ -1,6 +1,8 @@
-import styled from 'styled-components';
-import { HiX } from 'react-icons/hi';
+import { cloneElement, createContext, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { HiXMark } from 'react-icons/hi2';
+import styled from 'styled-components';
+// import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const StyledModal = styled.div`
   position: fixed;
@@ -51,21 +53,49 @@ const Button = styled.button`
   }
 `;
 
-function Modal({ children, onClose }) {
-  // creatPortal function takes second arg, attach to documentbody
-  // we can call modal anywhere in the body. Modal is direct child of the body
-  // outside of the dom, not in root. avoid overflow: hidden in some components
+const ModalContext = createContext();
+
+function Modal({ children }) {
+  const [openName, setOpenName] = useState('');
+
+  const close = () => setOpenName('');
+  const open = setOpenName;
+
+  return (
+    <ModalContext.Provider value={{ openName, close, open }}>
+      {children}
+    </ModalContext.Provider>
+  );
+}
+
+function Open({ children, opens: opensWindowName }) {
+  const { open } = useContext(ModalContext);
+
+  return cloneElement(children, { onClick: () => open(opensWindowName) });
+}
+
+function Window({ children, name }) {
+  const { openName, close } = useContext(ModalContext);
+  // const ref = useOutsideClick(close);
+
+  if (name !== openName) return null;
+
   return createPortal(
     <Overlay>
+      {/* <StyledModal ref={ref}> */}
       <StyledModal>
-        <Button onClick={onClose}>
-          <HiX />
+        <Button onClick={close}>
+          <HiXMark />
         </Button>
-        <div>{children}</div>
+
+        <div>{cloneElement(children, { onCloseModal: close })}</div>
       </StyledModal>
     </Overlay>,
     document.body
   );
 }
+
+Modal.Open = Open;
+Modal.Window = Window;
 
 export default Modal;
