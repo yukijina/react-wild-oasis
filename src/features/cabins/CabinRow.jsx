@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 import { formatCurrency } from '../../utils/helpers';
-import { useState } from 'react';
+// import { useState } from 'react';
 import CreateCabinForm from './CreateCabinForm';
 import { useDeleteCabin } from './useDeleteCabin';
 import { HiDocumentDuplicate, HiPencil, HiTrash } from 'react-icons/hi';
 import { useCreateCabin } from './useCreateCabin';
+import Modal from '../../ui/Modal';
+import ConfirmDelete from '../../ui/ConfirmDelete';
 
 // Styled CSS
 const TableRow = styled.div`
@@ -48,7 +50,7 @@ const Discount = styled.div`
 
 // CabinRaw starts here
 function CabinRow({ cabin }) {
-  const [showForm, setShowForm] = useState(false);
+  // const [showForm, setShowForm] = useState(false);
   const { isDeleting, deleteCabin } = useDeleteCabin();
   const { isCreating, createCabin } = useCreateCabin();
 
@@ -68,32 +70,53 @@ function CabinRow({ cabin }) {
   }
 
   return (
-    <>
-      <TableRow role='role'>
-        <img src={image} alt={name} />
-        <Cabin>{name}</Cabin>
-        <div>Fits up to {maxCapacity} guests</div>
-        <Price>{formatCurrency(regularPrice)}</Price>
-        {discount ? (
-          <Discount>{formatCurrency(discount)}</Discount>
-        ) : (
-          <span>&mdash;</span>
-        )}
+    <TableRow role='role'>
+      <img src={image} alt={name} />
+      <Cabin>{name}</Cabin>
+      <div>Fits up to {maxCapacity} guests</div>
+      <Price>{formatCurrency(regularPrice)}</Price>
+      {discount ? (
+        <Discount>{formatCurrency(discount)}</Discount>
+      ) : (
+        <span>&mdash;</span>
+      )}
 
-        <div>
-          <button onClick={handleDuplicate} disabled={isCreating}>
-            <HiDocumentDuplicate />
-          </button>
-          <button onClick={() => setShowForm((show) => !show)}>
-            <HiPencil />
-          </button>
-          <button onClick={() => deleteCabin(id)} disabled={isDeleting}>
-            <HiTrash />
-          </button>
-        </div>
-      </TableRow>
-      {showForm && <CreateCabinForm cabinToEdit={cabin} />}
-    </>
+      <div>
+        <button onClick={handleDuplicate} disabled={isCreating}>
+          <HiDocumentDuplicate />
+        </button>
+
+        <Modal>
+          <Modal.Open opens='edit'>
+            {/* <button onClick={() => setShowForm((show) => !show)}> */}
+            <button>
+              <HiPencil />
+            </button>
+          </Modal.Open>
+
+          <Modal.Window name='edit'>
+            <CreateCabinForm cabinToEdit={cabin} />
+          </Modal.Window>
+
+          {/* Delete button */}
+          <Modal.Open opens='delete'>
+            {/* <button onClick={() => deleteCabin(id)} disabled={isDeleting}> */}
+            <button>
+              <HiTrash />
+            </button>
+          </Modal.Open>
+
+          <Modal.Window name='delete'>
+            <ConfirmDelete
+              resourceName='cabins'
+              disabled={isDeleting}
+              onConfirm={() => deleteCabin(id)}
+            />
+          </Modal.Window>
+        </Modal>
+      </div>
+      {/* {showForm && <CreateCabinForm cabinToEdit={cabin} />} */}
+    </TableRow>
   );
 }
 
