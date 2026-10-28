@@ -36,7 +36,7 @@ const FilterButton = styled.button`
 `;
 
 function Filter({ filteredField, options }) {
-  console.log(options);
+  // console.log(options);
   // React Router
   const [searchParams, setSearchParams] = useSearchParams();
 

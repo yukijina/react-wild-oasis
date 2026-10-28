@@ -87,7 +87,7 @@ function Row({ children }) {
   );
 }
 function Body({ data, render }) {
-  console.log(data);
+  // console.log(data);
   // if (!data.length)
   if (!data) return <Empty>No data to show at this moment</Empty>;
 
