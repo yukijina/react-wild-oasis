@@ -1,4 +1,5 @@
-import styled, { css } from "styled-components";
+import { useSearchParams } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
 const StyledFilter = styled.div`
   border: 1px solid var(--color-grey-100);
@@ -33,3 +34,53 @@ const FilterButton = styled.button`
     color: var(--color-brand-50);
   }
 `;
+
+function Filter({ filteredField, options }) {
+  console.log(options);
+  // React Router
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // default value all (options.at(0).value)
+  const currentFilter = searchParams.get(filteredField) || options.at(0).value;
+
+  function handleClick(value) {
+    // generate parms like 'discount=with-discount'
+    // searchParams.set('discount', value);
+
+    // using props
+    searchParams.set(filteredField, value);
+    setSearchParams(searchParams);
+  }
+
+  // using props - comes from CabinTableOperations Component
+  return (
+    <StyledFilter>
+      {options.map((option) => (
+        <FilterButton
+          key={option.value}
+          onClick={() => handleClick(option.value)}
+          // active for css
+          active={option.value === currentFilter}
+          disabled={option.value === currentFilter}
+        >
+          {option.label}
+        </FilterButton>
+      ))}
+    </StyledFilter>
+  );
+
+  // directly add fiter here
+  // return (
+  //   <StyledFilter>
+  //     <FilterButton onClick={() => handleClick('all')}>All</FilterButton>
+  //     <FilterButton onClick={() => handleClick('no-discount')}>
+  //       No discount
+  //     </FilterButton>
+  //     <FilterButton onClick={() => handleClick('with-discount')}>
+  //       With discount
+  //     </FilterButton>
+  //   </StyledFilter>
+  // );
+}
+
+export default Filter;
